@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'live_sensor_screen.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,10 +14,12 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LiveSensorScreen(),
+          builder: (_) => HomeScreen(),
         ),
       );
     });

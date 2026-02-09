@@ -13,7 +13,28 @@ class _AlertScreenState extends State<AlertScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
 
-  // 👇 THIS IS THE takePhoto() FUNCTION
+  int sensorValue = 300; // 👈 dummy value
+
+  Color getAlertColor(int value) {
+    if (value <= 200) {
+      return Colors.green;
+    } else if (value <= 300) {
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
+  }
+
+  String getAlertText(int value) {
+    if (value <= 200) {
+      return "✅ Water level normal";
+    } else if (value <= 300) {
+      return "⚠️ Possible leakage detected";
+    } else {
+      return "🚨 CRITICAL WATER LEAKAGE!";
+    }
+  }
+
   Future<void> takePhoto() async {
     final XFile? photo =
         await _picker.pickImage(source: ImageSource.camera);
@@ -22,30 +43,37 @@ class _AlertScreenState extends State<AlertScreen> {
       setState(() {
         _image = File(photo.path);
       });
-
-      // debug check
-      print("Photo captured successfully");
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final Color alertColor = getAlertColor(sensorValue);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leak Alert"),
-        backgroundColor: Colors.red,
+        backgroundColor: alertColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text(
-              "⚠️ Water Leakage Detected",
+            Text(
+              getAlertText(sensorValue),
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.red,
+                color: alertColor,
               ),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 10),
+
+            Text(
+              "Sensor Value: $sensorValue",
+              style: const TextStyle(fontSize: 16),
             ),
 
             const SizedBox(height: 20),
@@ -57,12 +85,12 @@ class _AlertScreenState extends State<AlertScreen> {
             const SizedBox(height: 20),
 
             ElevatedButton.icon(
-              onPressed: takePhoto, // 👈 function used here
+              onPressed: takePhoto,
               icon: const Icon(Icons.camera_alt),
               label: const Text("Take Photo"),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
+                backgroundColor: alertColor,
               ),
             ),
           ],
